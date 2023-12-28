@@ -1,70 +1,8 @@
-document.addEventListener('DOMContentLoaded', function() {
-  globalThis.rcps = document.querySelector('#compose-recipients');
-  globalThis.sbjt = document.querySelector('#compose-subject');
-  globalThis.bd = document.querySelector('#compose-body');
 
-  // Use buttons to toggle between views
-  document.querySelector('#inbox').addEventListener('click', () => load_mailbox('inbox'));
-  document.querySelector('#sent').addEventListener('click', () => load_mailbox('sent'));
-  document.querySelector('#archived').addEventListener('click', () => load_mailbox('archive'));
-  document.querySelector('#compose').addEventListener('click', compose_email);
-
-  document.querySelector('#compose-form').onsubmit = send_email;
-
-  // By default, load the inbox
-  load_mailbox('inbox');
-});
-
-function compose_email() {
-
-  // Show compose view and hide other views
-  document.querySelector('#emails-view').style.display = 'none';
-  document.querySelector('#view-email').style.display = 'none';
-  document.querySelector('#compose-view').style.display = 'block';
-
-  // Clear out composition fields
-  document.querySelector('#compose-recipients').value = '';
-  document.querySelector('#compose-subject').value = '';
-  document.querySelector('#compose-body').value = '';
-}
-
-function replay_email() {
-
-  // Show compose view and hide other views
-  document.querySelector('#emails-view').style.display = 'none';
-  document.querySelector('#view-email').style.display = 'none'
-  document.querySelector('#compose-view').style.display = 'block';
-
-}
-
-function load_mailbox(mailbox) {
-  
-  // Show the mailbox and hide other views
-  document.querySelector('#emails-view').style.display = 'block';
-  document.querySelector('#compose-view').style.display = 'none';
-
-  document.querySelector('#view-email').style.display = 'none';
+function show_detail(mail_id) {
   document.querySelector('#view-email').innerHTML = ""
-
-  // Show the mailbox name
-  document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
-
-  fetch(`/emails/${mailbox}`)
-  .then(response => response.json())
-  .then(emails => {
-      emails.forEach(element => {
-        const div1 = document.createElement('div');
-        const div2 = document.createElement('div');
-        const div3 = document.createElement('div');
-        const div4 = document.createElement('div');
-        const div5 = document.createElement('div');
-        const div6 = document.createElement('div');
-        const div7 = document.createElement('div');
-        const div8 = document.createElement('div');
-        const div9 = document.createElement('div');
-        const div10 = document.createElement('textarea');
-        const div11 = document.createElement('div');
-        const span1 = document.createElement('span');
+  document.querySelector('#compose-view').style.display = 'none';
+  const span1 = document.createElement('span');
         const span2 = document.createElement('span');
         const span3 = document.createElement('span');
         const span4 = document.createElement('span');
@@ -72,38 +10,22 @@ function load_mailbox(mailbox) {
         const span6 = document.createElement('span');
         const span7 = document.createElement('span');
         const span8 = document.createElement('span');
-        const archive_b = document.createElement('button');
-        const archive2_b = document.createElement('button');
+        const div5 = document.createElement('div');
+        const div6 = document.createElement('div');
+        const div7 = document.createElement('div');
+        const div8 = document.createElement('div');
+        const div10 = document.createElement('textarea');
+        const div11 = document.createElement('div');
         const replay_b= document.createElement('button');
-        div2.innerHTML = element.sender;
-        div2.style.float = 'left';
-        div2.style.fontWeight = 'bold'
-        div2.setAttribute('class', 'col');       
-        div1.append(div2)
-        div3.innerHTML = element.subject;
-        div3.setAttribute('class', 'col'); 
-        div1.append(div3)
-        div4.innerHTML = element.timestamp;
-        div4.style.float = 'right';
-        div4.setAttribute('class', 'col text-muted');
-        div1.append(div4)
-        if (element.read === true) {
-          div1.style.backgroundColor = 'lightgray';
-        }
-        div1.setAttribute('class', 'row row-cols-auto');
-        div1.addEventListener('click', event => {
-          const elm = event.target;
-          console.log(elm);
-          if (elm.className !== 'btn btn-outline-primary'){
-          document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector('#emails-view').style.display = 'none';
           document.querySelector('#view-email').style.display = 'block';
-          fetch(`/emails/${element.id}`, {
+          fetch(`/emails/${mail_id}`, {
             method: 'PUT',
             body: JSON.stringify({
                 read: true
             })
           })
-          fetch(`/emails/${element.id}`)
+          fetch(`/emails/${mail_id}`)
           .then(response => response.json())
           .then(email => {
             span1.innerHTML = 'From: ';
@@ -160,6 +82,91 @@ function load_mailbox(mailbox) {
             div11.setAttribute('class', 'row row-cols-1');
             document.querySelector('#view-email').append(div11);
           })
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  globalThis.rcps = document.querySelector('#compose-recipients');
+  globalThis.sbjt = document.querySelector('#compose-subject');
+  globalThis.bd = document.querySelector('#compose-body');
+
+  // Use buttons to toggle between views
+  document.querySelector('#inbox').addEventListener('click', () => load_mailbox('inbox'));
+  document.querySelector('#sent').addEventListener('click', () => load_mailbox('sent'));
+  document.querySelector('#archived').addEventListener('click', () => load_mailbox('archive'));
+  document.querySelector('#compose').addEventListener('click', compose_email);
+
+  document.querySelector('#compose-form').onsubmit = send_email;
+
+  // By default, load the inbox
+  load_mailbox('inbox');
+});
+
+function compose_email() {
+
+  // Show compose view and hide other views
+  document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector('#view-email').style.display = 'none';
+  document.querySelector('#compose-view').style.display = 'block';
+
+  // Clear out composition fields
+  document.querySelector('#compose-recipients').value = '';
+  document.querySelector('#compose-subject').value = '';
+  document.querySelector('#compose-body').value = '';
+}
+
+function replay_email() {
+
+  // Show compose view and hide other views
+  document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector('#view-email').style.display = 'none'
+  document.querySelector('#compose-view').style.display = 'block';
+
+}
+
+function load_mailbox(mailbox) {
+  
+  // Show the mailbox and hide other views
+  document.querySelector('#emails-view').style.display = 'block';
+  document.querySelector('#compose-view').style.display = 'none';
+
+  document.querySelector('#view-email').style.display = 'none';
+  
+
+  // Show the mailbox name
+  document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
+
+  fetch(`/emails/${mailbox}`)
+  .then(response => response.json())
+  .then(emails => {
+      emails.forEach(element => {
+
+        const div1 = document.createElement('div');
+        const div2 = document.createElement('div');
+        const div3 = document.createElement('div');
+        const div4 = document.createElement('div');
+        const archive_b = document.createElement('button');
+        const archive2_b = document.createElement('button');
+        div2.innerHTML = element.sender;
+        div2.style.float = 'left';
+        div2.style.fontWeight = 'bold'
+        div2.setAttribute('class', 'col');       
+        div1.append(div2)
+        div3.innerHTML = element.subject;
+        div3.setAttribute('class', 'col'); 
+        div1.append(div3)
+        div4.innerHTML = element.timestamp;
+        div4.style.float = 'right';
+        div4.setAttribute('class', 'col text-muted');
+        div1.append(div4)
+        if (element.read === true) {
+          div1.style.backgroundColor = 'lightgray';
+        }
+        div1.setAttribute('class', 'row row-cols-auto');
+        div1.addEventListener('click', event => {
+          const elm = event.target;
+          console.log(elm);
+          if (elm.className !== 'btn btn-outline-primary'){
+          show_detail(element.id)
         }
       });      
         if (mailbox == 'inbox') {
